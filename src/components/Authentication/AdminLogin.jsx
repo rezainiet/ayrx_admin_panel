@@ -35,7 +35,7 @@ const AdminLogin = () => {
 
             // Handle successful login, e.g., redirect to admin dashboard
         } catch (error) {
-            if (error.response.status === 403) {
+            if (error?.response?.status === 403) {
                 message.error("You don't have any permission to log in admin panel!")
             }
             else {

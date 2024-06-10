@@ -39,11 +39,11 @@ const ManagePosts = () => {
         action: 'https://api.imgbb.com/1/upload?key=b379cea0ac99373d4d9466d4578912f3',
         onChange(info) {
             if (info.file.status === 'done') {
-                message.success(`${info.file.name} file uploaded successfully`);
+                message.success(`${info?.file?.name} file uploaded successfully`);
                 // Get the image URL from the response and set it in state
                 setImageUrl(info.file.response.data.url);
-            } else if (info.file.status === 'error') {
-                message.error(`${info.file.name} file upload failed.`);
+            } else if (info?.file?.status === 'error') {
+                message.error(`${info?.file?.name} file upload failed.`);
             }
         },
     };
