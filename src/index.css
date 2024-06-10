@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Additional styles if needed */
+.header-logo {
+  height: 32px;
+  margin-right: 16px;
+}
