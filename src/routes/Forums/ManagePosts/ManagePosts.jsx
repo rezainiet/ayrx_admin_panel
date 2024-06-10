@@ -12,7 +12,7 @@ const ManagePosts = () => {
     const onFinish = async (values) => {
         try {
             // Make POST request to create a post
-            const response = await fetch('http://localhost:4000/api/forumPosts/createPost', {
+            const response = await fetch(`${import.meta.env.VITE_API_URI}/api/forumPosts/createPost`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

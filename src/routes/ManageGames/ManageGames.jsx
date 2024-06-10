@@ -61,7 +61,7 @@ const ManageGames = () => {
 
     const postGameDetails = async (gameData) => {
         axios.defaults.withCredentials = true;
-        await axios.post('http://localhost:4000/api/v1/games/create', gameData);
+        await axios.post(`${import.meta.env.VITE_API_URI}/api/v1/games/create`, gameData);
         setGames([...games, { ...gameData, _id: String(Math.random()) }]); // Adjust to use actual ID from backend
     };
 

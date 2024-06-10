@@ -29,7 +29,7 @@ const ForumPosts = () => {
     const fetchPosts = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('http://localhost:4000/api/forumPosts/getPost');
+            const response = await axios.get(`${import.meta.env.VITE_API_URI}/api/forumPosts/getPost`);
             setPosts(response.data || []);
             setFilteredPosts(response.data || []);
         } catch (error) {

@@ -30,7 +30,7 @@ const GameLists = () => {
     const fetchGames = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('http://localhost:4000/api/v1/games/getGames');
+            const response = await axios.get(`${import.meta.env.VITE_API_URI}/api/v1/games/getGames`);
             setGames(response.data || []);
             setFilteredGames(response.data || []);
         } catch (error) {

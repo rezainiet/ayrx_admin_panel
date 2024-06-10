@@ -21,7 +21,7 @@ const AdminLogin = () => {
         setLoading(true);
         console.log(values)
         try {
-            const response = await axios.post('http://localhost:4000/api/v1/user/login-admin', values, {
+            const response = await axios.post(`${import.meta.env.VITE_API_URI}/api/v1/user/login-admin`, values, {
                 headers: {
                     'Content-Type': 'application/json'
                 },
