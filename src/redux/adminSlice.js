@@ -1,10 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+const initialState = {
+    authAdmin: null,
+};
+
 const adminSlice = createSlice({
     name: 'admin',
-    initialState: {
-        authAdmin: null,
-    },
+    initialState,
     reducers: {
         setAuthAdmin: (state, action) => {
             state.authAdmin = action.payload;

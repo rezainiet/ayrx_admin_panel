@@ -66,7 +66,7 @@ const Sidebar = () => {
                         <Link to="/settings/profile">Profile</Link>
                     </Menu.Item>
                     <Menu.Item key="9">
-                        <Link to="/settings/preferences">Preferences</Link>
+                        <Link to="/settings">Settings</Link>
                     </Menu.Item>
                 </SubMenu>
                 <Menu.Item key="toggle" icon={collapsed ? <MailOutlined /> : <TeamOutlined />}>

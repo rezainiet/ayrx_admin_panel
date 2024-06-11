@@ -131,7 +131,7 @@ const ForumPosts = () => {
             <Title level={2}>Forum Posts</Title>
             <div className="flex justify-between mb-5">
                 <div>
-                    <Button type="primary" onClick={() => navigate('/create-post')}>
+                    <Button type="primary" disabled onClick={() => navigate('/create-post')}>
                         Add Post
                     </Button>
                 </div>

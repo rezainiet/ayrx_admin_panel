@@ -10,7 +10,7 @@ const UserMenu = () => {
                 <Link to="/settings/profile">Profile</Link>
             </Menu.Item>
             <Menu.Item key="2" icon={<SettingOutlined />}>
-                <Link to="/settings/preferences">Preferences</Link>
+                <Link to="/settings">Settings</Link>
             </Menu.Item>
             <Menu.Divider />
             <Menu.Item key="3" icon={<LogoutOutlined />}>
