@@ -55,7 +55,7 @@ const Sidebar = () => {
                 </SubMenu>
                 <SubMenu key="forums" icon={<AppstoreOutlined />} title="Forums">
                     <Menu.Item key="6">
-                        <Link to="/forums/pots">Posts</Link>
+                        <Link to="/forums/posts">Posts</Link>
                     </Menu.Item>
                     <Menu.Item key="7">
                         <Link to="/forums/manage-posts">Create Posts</Link>
