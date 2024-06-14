@@ -132,14 +132,14 @@ const ManageGames = () => {
                     <Form.Item
                         name="genre"
                         label="Genre"
-                        rules={[{ required: true, message: 'Please enter the game genre.' }]}
+                    // rules={[{ required: true, message: 'Please enter the game genre.' }]}
                     >
                         <Input placeholder="Enter game genre" />
                     </Form.Item>
                     <Form.Item
                         name="ratings"
                         label="Ratings"
-                        rules={[{ required: true, message: 'Please enter the game ratings.' }]}
+                    // rules={[{ required: true, message: 'Please enter the game ratings.' }]}
                     >
                         <Input type="number" min={1} max={5} placeholder="Enter game ratings" />
                     </Form.Item>

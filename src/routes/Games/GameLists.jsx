@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Typography, Select, Input, message, Skeleton } from 'antd';
-import { SettingOutlined } from '@ant-design/icons';
+import { Table, Button, Typography, Select, Input, message, Skeleton, Modal, Form, InputNumber } from 'antd';
+import { SettingOutlined, DeleteOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './GameLists.css';
@@ -17,6 +17,9 @@ const GameLists = () => {
     const [pageSize, setPageSize] = useState(8);
     const [searchTerm, setSearchTerm] = useState('');
     const [genreFilter, setGenreFilter] = useState('');
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [selectedGame, setSelectedGame] = useState(null);
+    const [form] = Form.useForm();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -57,12 +60,37 @@ const GameLists = () => {
         setCurrentPage(1); // Reset to first page when filters change
     };
 
-    const handleModify = (id) => {
-        if (id) {
-            message.info(`Modify game with ID: ${id}`);
-            // Implement modify functionality here
-        } else {
-            message.error("Game ID is undefined");
+    const showModifyModal = (game) => {
+        setSelectedGame(game);
+        form.setFieldsValue({
+            name: game.name,
+            description: game.description,
+            ratings: game.ratings,
+            coverPhoto: game.coverPhoto,
+        });
+        setIsModalVisible(true);
+    };
+
+    const handleModify = async (values) => {
+        try {
+            await axios.put(`${import.meta.env.VITE_API_URI}/api/v1/games/updateGame/${selectedGame.key}`, values);
+            message.success('Game modified successfully');
+            fetchGames(); // Refresh the game list
+        } catch (error) {
+            message.error('Failed to modify the game. Please try again later.');
+        } finally {
+            setIsModalVisible(false);
+        }
+    };
+
+    const handleDelete = async (id) => {
+        try {
+            axios.defaults.withCredentials = true
+            await axios.delete(`${import.meta.env.VITE_API_URI}/api/v1/games/deleteGame/${id}`);
+            message.success('Game deleted successfully');
+            fetchGames(); // Refresh the game list
+        } catch (error) {
+            message.error('Failed to delete the game. Please try again later.');
         }
     };
 
@@ -71,7 +99,7 @@ const GameLists = () => {
     };
 
     const handleAddGame = () => {
-        navigate('/create-game');
+        navigate('/games/manage-games');
     };
 
     const columns = [
@@ -100,9 +128,12 @@ const GameLists = () => {
             title: 'Actions',
             key: 'actions',
             render: (_text, record) => (
-                <div className="action-buttons">
-                    <Button type="primary" icon={<SettingOutlined />} onClick={() => handleModify(record.key)}>
+                <div className=" flex gap-3 items-center justify-center">
+                    <Button type="primary" icon={<SettingOutlined />} onClick={() => showModifyModal(record)}>
                         Modify
+                    </Button>
+                    <Button danger icon={<DeleteOutlined />} onClick={() => handleDelete(record.key)} >
+                        Delete
                     </Button>
                 </div>
             ),
@@ -115,6 +146,7 @@ const GameLists = () => {
         name: game.name,
         genre: game.genre,
         ratings: game.ratings,
+        description: game.description,
     }));
 
     return (
@@ -166,6 +198,27 @@ const GameLists = () => {
             {!loading && !error && filteredGames.length === 0 && (
                 <Text type="secondary" className="no-games-message">No games found.</Text>
             )}
+            <Modal
+                title="Modify Game"
+                visible={isModalVisible}
+                onCancel={() => setIsModalVisible(false)}
+                onOk={() => form.submit()}
+            >
+                <Form form={form} onFinish={handleModify} layout="vertical">
+                    <Form.Item name="name" label="Name">
+                        <Input />
+                    </Form.Item>
+                    <Form.Item name="description" label="Description">
+                        <Input />
+                    </Form.Item>
+                    <Form.Item name="ratings" label="Ratings">
+                        <InputNumber min={0} max={10} />
+                    </Form.Item>
+                    <Form.Item name="coverPhoto" label="Cover Photo URL">
+                        <Input />
+                    </Form.Item>
+                </Form>
+            </Modal>
         </div>
     );
 };

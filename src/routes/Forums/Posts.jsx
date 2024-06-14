@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Typography, Input, message, Skeleton, Popconfirm } from 'antd';
+import { Table, Button, Typography, Input, message, Skeleton, Popconfirm, Modal, Form, Upload } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
-
 
 const { Text, Title } = Typography;
 
@@ -16,6 +16,9 @@ const ForumPosts = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(8);
     const [searchTerm, setSearchTerm] = useState('');
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [currentPost, setCurrentPost] = useState(null);
+    const [form] = Form.useForm();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -29,6 +32,7 @@ const ForumPosts = () => {
     const fetchPosts = async () => {
         setLoading(true);
         try {
+            axios.defaults.withCredentials = true;
             const response = await axios.get(`${import.meta.env.VITE_API_URI}/api/forumPosts/getPost`);
             setPosts(response.data || []);
             setFilteredPosts(response.data || []);
@@ -56,14 +60,43 @@ const ForumPosts = () => {
         setCurrentPage(page);
     };
 
-    const handleModify = (postId) => {
-        // Implement modify functionality here
-        message.info(`Modify post with ID: ${postId}`);
+    const handleModify = (post) => {
+        setCurrentPost(post);
+        form.setFieldsValue({
+            title: post.title,
+            content: post.content,
+            image: post.image,
+        });
+        setIsModalVisible(true);
     };
 
-    const handleDelete = (postId) => {
-        // Implement delete functionality here
-        message.success(`Post with ID: ${postId} deleted successfully`);
+    const handleDelete = async (postId) => {
+        try {
+            axios.defaults.withCredentials = true;
+            await axios.delete(`${import.meta.env.VITE_API_URI}/api/forumPosts/deletePost/${postId}`);
+            message.success(`Post with ID: ${postId} deleted successfully`);
+            fetchPosts();
+        } catch (error) {
+            message.error('Failed to delete post. Please try again later.');
+        }
+    };
+
+    const handleOk = async () => {
+        try {
+            const values = await form.validateFields();
+            axios.defaults.withCredentials = true;
+            await axios.put(`${import.meta.env.VITE_API_URI}/api/forumPosts/updatePost/${currentPost.key}`, values);
+            message.success('Post updated successfully');
+            setIsModalVisible(false);
+            fetchPosts();
+        } catch (error) {
+            message.error('Failed to update post. Please try again later.');
+        }
+    };
+
+    const handleCancel = () => {
+        setIsModalVisible(false);
+        form.resetFields();
     };
 
     const columns = [
@@ -72,18 +105,15 @@ const ForumPosts = () => {
             dataIndex: 'author',
             key: 'author',
             render: (author) => (
-                <>
-                    <div className='flex items-center'>
-                        <LazyLoadImage
-                            effect="blur"
-                            alt={author.fullName}
-                            height={'30px'}
-                            src={author.profilePhoto} // use normal <img> attributes as props
-                            width={'30px'} />
-
-                        <span style={{ marginLeft: '10px' }}>{author.fullName}</span>
-                    </div>
-                </>
+                <div className='flex items-center'>
+                    <LazyLoadImage
+                        effect="blur"
+                        alt={author.fullName}
+                        height={'30px'}
+                        src={author.profilePhoto} // use normal <img> attributes as props
+                        width={'30px'} />
+                    <span style={{ marginLeft: '10px' }}>{author.fullName}</span>
+                </div>
             ),
         },
         {
@@ -101,7 +131,7 @@ const ForumPosts = () => {
             key: 'actions',
             render: (_text, record) => (
                 <>
-                    <Button type="primary" onClick={() => handleModify(record.key)}>
+                    <Button type="primary" onClick={() => handleModify(record)}>
                         Modify
                     </Button>
                     <Popconfirm
@@ -110,7 +140,7 @@ const ForumPosts = () => {
                         okText="Yes"
                         cancelText="No"
                     >
-                        <Button danger disabled style={{ marginLeft: '8px' }}>
+                        <Button danger style={{ marginLeft: '8px' }}>
                             Delete
                         </Button>
                     </Popconfirm>
@@ -124,6 +154,7 @@ const ForumPosts = () => {
         author: post.user,
         title: post.title,
         content: post.content,
+        image: post.image,
     }));
 
     return (
@@ -131,7 +162,7 @@ const ForumPosts = () => {
             <Title level={2}>Forum Posts</Title>
             <div className="flex justify-between mb-5">
                 <div>
-                    <Button type="primary" disabled onClick={() => navigate('/create-post')}>
+                    <Button type="primary" onClick={() => navigate('/forums/manage-posts')}>
                         Add Post
                     </Button>
                 </div>
@@ -147,20 +178,46 @@ const ForumPosts = () => {
             {loading && <Skeleton active />}
             {error && <Text type="danger">{error}</Text>}
             {!loading && !error && filteredPosts.length > 0 && (
-                <>
-                    <Table
-                        columns={columns}
-                        dataSource={dataSource}
-                        pagination={{
-                            current: currentPage,
-                            pageSize: pageSize,
-                            total: filteredPosts.length,
-                            onChange: handlePageChange,
-                        }}
-                    />
-                </>
+                <Table
+                    columns={columns}
+                    dataSource={dataSource}
+                    pagination={{
+                        current: currentPage,
+                        pageSize: pageSize,
+                        total: filteredPosts.length,
+                        onChange: handlePageChange,
+                    }}
+                />
             )}
             {!loading && !error && filteredPosts.length === 0 && <Text type="secondary">No posts found.</Text>}
+
+            <Modal
+                title="Modify Post"
+                visible={isModalVisible}
+                onOk={handleOk}
+                onCancel={handleCancel}
+                okText="Save"
+            >
+                <Form
+                    form={form}
+                    layout="vertical"
+                    initialValues={{
+                        title: currentPost?.title,
+                        content: currentPost?.content,
+                        image: currentPost?.image,
+                    }}
+                >
+                    <Form.Item name="title" label="Title">
+                        <Input placeholder="Enter post title" />
+                    </Form.Item>
+                    <Form.Item name="content" label="Content">
+                        <Input.TextArea rows={4} placeholder="Enter post content" />
+                    </Form.Item>
+                    <Form.Item name="image" label="Image URL">
+                        <Input placeholder="Enter image URL" />
+                    </Form.Item>
+                </Form>
+            </Modal>
         </div>
     );
 };
