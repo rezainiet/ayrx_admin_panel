@@ -1,9 +1,20 @@
 import React from 'react';
-import { Menu, Dropdown, Avatar } from 'antd';
+import { Menu, Dropdown, Avatar, message } from 'antd';
 import { UserOutlined, LogoutOutlined, SettingOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { logoutAdmin } from '../redux/adminSlice';
 
 const UserMenu = () => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate('');
+
+    const handleLogout = () => {
+        dispatch(logoutAdmin());
+        message.success('You have been logged out successfully');
+        navigate('/login')
+    };
+
     const menu = (
         <Menu>
             <Menu.Item key="1" icon={<UserOutlined />}>
@@ -13,7 +24,7 @@ const UserMenu = () => {
                 <Link to="/settings">Settings</Link>
             </Menu.Item>
             <Menu.Divider />
-            <Menu.Item key="3" icon={<LogoutOutlined />}>
+            <Menu.Item key="3" icon={<LogoutOutlined />} onClick={handleLogout}>
                 Logout
             </Menu.Item>
         </Menu>
