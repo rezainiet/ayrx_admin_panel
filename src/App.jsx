@@ -18,6 +18,7 @@ import PrivateRoute from './components/Authentication/PrivateRoute';
 import Posts from './routes/Forums/Posts';
 import ManagePosts from './routes/Forums/ManagePosts/ManagePosts';
 import Settings from './routes/Settings';
+import PendingWithdrawals from './routes/Withdrawals/PendingWithdrawals';
 
 const { Sider } = Layout;
 
@@ -44,6 +45,7 @@ const App = () => {
                   <Route path="/users/add" element={<PrivateRoute><AddUser /></PrivateRoute>} />
                   <Route path="/games/lists" element={<PrivateRoute><GameLists /></PrivateRoute>} />
                   <Route path="/forums/posts" element={<PrivateRoute><Posts /></PrivateRoute>} />
+                  <Route path="/withdrawals/pending" element={<PrivateRoute>< PendingWithdrawals /></PrivateRoute>} />
                   <Route path="/forums/manage-posts" element={<PrivateRoute><ManagePosts /></PrivateRoute>} />
                   <Route path="/games/manage-games" element={<PrivateRoute><ManageGames /></PrivateRoute>} />
                   <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />

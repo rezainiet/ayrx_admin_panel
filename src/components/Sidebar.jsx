@@ -45,6 +45,11 @@ const Sidebar = () => {
                         <Link to="/users/add">Add User</Link>
                     </Menu.Item>
                 </SubMenu>
+                <SubMenu key="withdrawals" icon={<UserOutlined />} title="Withdrawals">
+                    <Menu.Item key="10">
+                        <Link to="/withdrawals/pending">Pending Withdrawals</Link>
+                    </Menu.Item>
+                </SubMenu>
                 <SubMenu key="games" icon={<AppstoreOutlined />} title="Games">
                     <Menu.Item key="4">
                         <Link to="/games/lists">Game Lists</Link>
